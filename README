@@ -8,7 +8,7 @@ Twitter sends the information by chunks. Then, each part will represent an indiv
 
 Usage:
 
-'''scala
+```scala
 
 object ConsoleTwitterClient extends App {
 
@@ -39,8 +39,15 @@ class PrinterActor extends Actor with Logging {
   }
 }
 
-'''
+```
 
 
 So, you have to provide the handler (PrinterActor) and the login credentials.
 The DefaultTwitterStreamingSession use basic authentication. But, it should be easy to customize it and use OAuth.
+
+DefaultTwitterStreamingSession Looks like
+
+```scala
+trait DefaultTwitterStreamingSession
+  extends TwitterStreamingSession[Tweet] with BackOffStreamReconnectionStrategy with JsonEntitySerializer with BasicAuthenticationMechanism
+```
