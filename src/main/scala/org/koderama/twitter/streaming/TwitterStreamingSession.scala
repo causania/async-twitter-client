@@ -81,7 +81,7 @@ trait TwitterStreamingSession[T]
     val url = new StringBuilder(baseUrl)
     if (params != null && !params.isEmpty) {
       url.append("?")
-      params.foreach(e => url.append(e._1 + "=" + e._2 + "&"))
+      params.foreach(e => if (e._1 != null && !e._1.trim.isEmpty) url.append(e._1 + "=" + e._2 + "&"))
     }
 
     url.toString()
@@ -90,8 +90,6 @@ trait TwitterStreamingSession[T]
   override def postStop() {
     EventHandler.info(this, "Streaming session is shutting down...")
     httpClient.close()
-    self.unlink(handler)
-    handler.stop()
   }
 }
 

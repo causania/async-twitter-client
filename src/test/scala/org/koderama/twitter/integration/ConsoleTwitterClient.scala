@@ -1,9 +1,10 @@
 package org.koderama.twitter.integration
 
 import org.koderama.twitter.streaming.DefaultTwitterStreamingSession
-import akka.actor.Actor
 import org.koderama.twitter.util.Logging
 import org.koderama.twitter.{ErrorCodeOnProcessing, ExceptionOnProcessing, EntityReceived, Filter}
+import akka.event.EventHandler
+import akka.actor.{Scheduler, Actor}
 
 
 /**
@@ -13,13 +14,15 @@ import org.koderama.twitter.{ErrorCodeOnProcessing, ExceptionOnProcessing, Entit
  */
 object ConsoleTwitterClient extends App {
 
-  val s = Actor.actorOf(new ConsoleTwitterSession).start()
+  val s = Actor.actorOf[ConsoleTwitterSession].start()
   s ! Filter()
 
-  Thread.sleep(20000)
+  Thread.sleep(15000)
 
-  s.stop()
-
+  EventHandler.shutdown()
+  Actor.registry.shutdownAll()
+  Actor.remote.shutdown()
+  Scheduler.shutdown()
 }
 
 class ConsoleTwitterSession extends DefaultTwitterStreamingSession {
