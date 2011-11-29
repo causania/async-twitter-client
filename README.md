@@ -15,9 +15,14 @@ object ConsoleTwitterClient extends App {
   val s = Actor.actorOf(new ConsoleTwitterSession).start()
   s ! Filter()
 
+  // Wait some time to get some news
   Thread.sleep(20000)
 
-  s.stop()
+  // Stop everything.... if there is another way, let me know!
+  EventHandler.shutdown()
+  Actor.registry.shutdownAll()
+  Actor.remote.shutdown()
+  Scheduler.shutdown()
 
 }
 
