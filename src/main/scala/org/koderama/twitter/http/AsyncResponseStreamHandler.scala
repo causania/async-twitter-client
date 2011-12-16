@@ -9,16 +9,22 @@ import protocol.{EntitySerializer, TwitterProtocolException}
 /**
  * An asynchronous handler which take cares of the different events within the request.
  *
- * Callback methods are invoked in the following order: 1 - [[#onStatusReceived(HttpResponseStatus)]] 2 -
- * [[#onHeadersReceived(HttpResponseHeaders)]] 3 - [[#onBodyPartReceived(HttpResponseBodyPart)]] (could be
- * invoked several times) 4 - [[#onCompleted()]] (once the response has been fully read).
+ * Callback methods are invoked in the following order:
+ * 1 - [[com.ning.http.client.AsyncHandler#onStatusReceived(HttpResponseStatus)]]
+ * 2 - [[com.ning.http.client.AsyncHandler#onHeadersReceived(HttpResponseHeaders)]]
+ * 3 - [[com.ning.http.client.AsyncHandler#onBodyPartReceived(HttpResponseBodyPart)]] (could be
+ * invoked several times)
+ * 4 - [[com.ning.http.client.AsyncHandler#onCompleted()]] (once the response has been fully read).
  *
- * Interrupting the process of the asynchronous response can be achieved by returning a [[AsyncHandler.STATE#ABORT]]
+ * Interrupting the process of the asynchronous response can be achieved by returning a
+ * [[com.ning.http.client.AsyncHandler.STATE#ABORT]]
  * at any moment during the processing of the asynchronous response.
  *
- * This handler will not store the partial responses (mainly to avoid OOM). Then [[#onCompleted()]] returns an empty string.
+ * This handler will not store the partial responses (mainly to avoid OOM).
+ * Then [[com.ning.http.client.AsyncHandler#onCompleted()]] returns an empty string.
  *
- * Concrete implementations must provide a: [[ResponseEventHandler[T]]] and and [[EntitySerializer]] by using mixins
+ * Concrete implementations must provide a: [[org.koderama.twitter.http.ResponseEventHandler[T]]]
+ * and [[org.koderama.twitter.protocol.EntitySerializer]] by using mixins
  *
  * @author alejandro@koderama.com
  */
@@ -40,7 +46,7 @@ trait AsyncResponseStreamHandler[T] extends AsyncHandler[String] with ResponseEv
     if (escapedResponse.length() > 0) {
       try {
         val entity: T = deserialize(escapedResponse)
-        debug("Entity recieved: " + entity)
+        debug("Entity received: " + entity)
 
         onEntity(entity)
       } catch {

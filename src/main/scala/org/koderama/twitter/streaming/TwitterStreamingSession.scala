@@ -9,11 +9,13 @@ import akka.actor.{ActorRef, Actor}
 import model.Tweet
 import http.{BackOffStreamReconnectionStrategy, StreamReconnectionStrategy, AsyncResponseStreamHandler}
 import protocol.{JsonEntitySerializer, EntitySerializer}
-import http.auth.{BasicAuthenticationMechanism, AuthenticationMechanism}
+import http.auth.{OAuthAuthenticationMechanism, BasicAuthenticationMechanism, AuthenticationMechanism}
 
 /**
- * Aggregation trait that defines a default streaming session using [[BackOffStreamReconnectionStrategy]],
- * [[JsonEntitySerializer]] and [[BasicAuthenticationMechanism]]
+ * Aggregation trait that defines a default streaming session using
+ * [[org.koderama.twitter.http.BackOffStreamReconnectionStrategy]],
+ * [[org.koderama.twitter.protocol.JsonEntitySerializer]] and
+ * [[org.koderama.twitter.http.auth.BasicAuthenticationMechanism]]
  *
  * Concrete implementations still need to provide the definition for configuration methods.
  *
@@ -23,10 +25,26 @@ trait DefaultTwitterStreamingSession
   extends TwitterStreamingSession[Tweet] with BackOffStreamReconnectionStrategy with JsonEntitySerializer with BasicAuthenticationMechanism
 
 /**
+ * Aggregation trait that defines a default streaming session using
+ * [[org.koderama.twitter.http.BackOffStreamReconnectionStrategy]],
+ * [[org.koderama.twitter.protocol.JsonEntitySerializer]] and
+ * [[org.koderama.twitter.http.auth.OAuthAuthenticationMechanism]]
+ *
+ * Concrete implementations still need to provide the definition for configuration methods.
+ *
+ * @author alejandro@koderama.com
+ */
+trait OAuthTwitterStreamingSession
+  extends TwitterStreamingSession[Tweet] with BackOffStreamReconnectionStrategy with JsonEntitySerializer with OAuthAuthenticationMechanism
+
+
+/**
  * Represents a streaming session with the Twitter API. These sessions are expected to be open for a long period.
  *
- * Http connections will persist opened during the session. For more info see [[AsyncResponseStreamHandler]]
- * The creation of the [[AsyncHttpClient]] can be cutomized by overriding the [[#createHttpClient]] method.
+ * Http connections will persist opened during the session.
+ * For more info see [[org.koderama.twitter.http.AsyncResponseStreamHandler]]
+ * The creation of the [[com.ning.http.client.AsyncHttpClient]] can be cutomized
+ * by overriding the [[org.koderama.twitter.streaming.TwitterStreamingSession#createHttpClient]] method.
  *
  * Concrete implementations need to provide a handler actor to be called when there is something to notify.
  * <p>
@@ -44,7 +62,7 @@ trait TwitterStreamingSession[T]
   private val httpClient = createHttpClient()
 
   /**
-   * Creates the [[AsyncHttpClient]] to be used for the underlying Http requests
+   * Creates the [[com.ning.http.client.AsyncHttpClient]] to be used for the underlying Http requests
    */
   protected def createHttpClient() = new AsyncHttpClient()
 
@@ -96,12 +114,14 @@ trait TwitterStreamingSession[T]
 /**
  * Encapsulates the logic to perform a request for a given session.
  *
- * The [[TwitterStreamingSession]] specific implementation is used to perform some stream action, including:
+ * The [[org.koderama.twitter.streaming.TwitterStreamingSession]] specific implementation is used to
+ * perform some stream action, including:
  * <p>
  * 1. Streaming events will be forwarded to the session handler actor.<br/>
- * 2. If there is an error on the stream, the session [[StreamReconnectionStrategy]] will be used to reconnect.<br/>
+ * 2. If there is an error on the stream, the session [[org.koderama.twitter.http.StreamReconnectionStrategy]]
+ * will be used to reconnect.<br/>
  * 3. The session serialization configuration will be used to deserialize objects in the stream.<br/>
- * 4. The session [[AuthenticationMechanism]] is used to configure the request.<br/>
+ * 4. The session [[org.koderama.twitter.http.auth.AuthenticationMechanism]] is used to configure the request.<br/>
  * </p>
  *
  * @author alejandro@koderama.com

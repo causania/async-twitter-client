@@ -29,7 +29,7 @@ class BasicAuthenticationMechanismSpec extends Specification with Mockito {
     "This is a specification to check the general behavior of the BasicAuthenticationMechanism class" ^
       p ^
       "The BasicAuthenticationMechanism should" ^
-      "Encode userna: alejandro - pass: mypass to:" ! e1
+      "Encode username: alejandro:mypass:" ! e1
 
   end
 

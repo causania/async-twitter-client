@@ -17,6 +17,7 @@ libraryDependencies ++= {
     "com.fasterxml" % "jackson-module-scala" % "1.9.1-SNAPSHOT" withSources(),
     "joda-time" % "joda-time" % "2.0",
     "org.joda" % "joda-convert" % "1.2",
+    "org.scribe" % "scribe" % "1.2.3" withSources(),
     "com.ning" % "async-http-client" % "1.7.0-SNAPSHOT" withSources(),
     "se.scalablesolutions.akka" % "akka-actor" % "1.3-RC1" withSources(),
     "se.scalablesolutions.akka" % "akka-stm" % "1.3-RC1" withSources()

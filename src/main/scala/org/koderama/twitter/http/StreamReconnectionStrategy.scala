@@ -1,4 +1,5 @@
-package org.koderama.twitter.http
+package org.koderama.twitter
+package http
 
 import com.ning.http.client.{AsyncHttpClient, AsyncHandler}
 import org.koderama.twitter.util.Logging
@@ -73,7 +74,8 @@ trait ReconnectionTimeouts {
 }
 
 /**
- * Implements the [[StreamReconnectionStrategy]] interface following the guidelines described at the Twitter site:
+ * Implements the [[org.koderama.twitter.http.StreamReconnectionStrategy]] interface
+ * following the guidelines described at the Twitter site:
  *
  * When a network error (TCP/IP level) is encountered, back off linearly. Perhaps start at 250 milliseconds and cap at
  * 16 seconds. Network layer problems are generally transitory and tend to clear quickly.

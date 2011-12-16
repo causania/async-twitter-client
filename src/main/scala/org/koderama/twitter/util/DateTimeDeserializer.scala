@@ -7,10 +7,11 @@ import org.codehaus.jackson.map.{DeserializationContext, JsonDeserializer}
 import org.codehaus.jackson.JsonParser
 
 /**
- * Deserialize [[DateTime]] objects from a Json representation. This class is intended only to be used for the
+ * Deserialize [[org.joda.time.DateTime]] objects from a Json representation.
+ * This class is intended only to be used for the
  * Twitter APi since it uses a specific date-time format: EEE MMM dd HH:mm:ss Z yyyy.
  *
- * If there is an [[IllegalArgumentException]] while parsing the data, null is retrieved.
+ * If there is an [[java.lang.IllegalArgumentException]] while parsing the data, null is retrieved.
  *
  * Instances of this class are immutable and thread safe.
  *

@@ -38,7 +38,7 @@ trait EntitySerializer {
 case class TwitterProtocolException(message: String, cause: Throwable = null) extends RuntimeException(message, cause)
 
 /**
- * Implementation of the [[EntitySerializer]] interface to be used for Json protocols.
+ * Implementation of the [[org.koderama.twitter.protocol.EntitySerializer]] interface to be used for Json protocols.
  *
  * Instances of this class are immutable and thread safe.
  *
