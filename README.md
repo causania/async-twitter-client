@@ -48,11 +48,36 @@ class PrinterActor extends Actor with Logging {
 
 
 So, you have to provide the handler (PrinterActor) and the login credentials.
-The DefaultTwitterStreamingSession use basic authentication. But, it should be easy to customize it and use OAuth.
 
-DefaultTwitterStreamingSession Looks like
+
+
+Authentication
+
+The DefaultTwitterStreamingSession use basic authentication. But, you can use the OAuthTwitterStreamingSession trait.
+
 
 ```scala
-trait DefaultTwitterStreamingSession
-  extends TwitterStreamingSession[Tweet] with BackOffStreamReconnectionStrategy with JsonEntitySerializer with BasicAuthenticationMechanism
+class ConsoleTwitterSession extends OAuthTwitterStreamingSession {
+
+  val apiKey = "someKey"
+
+  val apiSecret = "someSecret"
+
+  val defaultTracks = Set("akka", "scala")
+
+  val handler = this.self.spawnLink[PrinterActor]
+
+  def verificationCode(authUrl: String) = {
+    println("Go to the url %s and enter the verification code".format(authUrl))
+    Console.readLine()
+  }
+}
+```
+
+
+OAuthTwitterStreamingSession Looks like
+
+```scala
+trait OAuthTwitterStreamingSession
+  extends TwitterStreamingSession[Tweet] with BackOffStreamReconnectionStrategy with JsonEntitySerializer with OAuthAuthenticationMechanism
 ```
