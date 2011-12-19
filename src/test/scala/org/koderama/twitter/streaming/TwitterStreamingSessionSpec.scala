@@ -5,7 +5,6 @@ import http.StreamReconnectionStrategy
 import protocol.EntitySerializer
 import http.auth.AuthenticationMechanism
 import org.specs2.mock.Mockito
-import util.Logging
 import akka.testkit.TestActorRef
 import org.specs2.Specification
 import org.mockito.Mockito.verify
@@ -13,17 +12,15 @@ import org.specs2.specification.{Fragments, Step}
 import com.ning.http.client.{HttpResponseBodyPart, AsyncHandler, AsyncHttpClient}
 import model.{GeoPoint, Tweet}
 import org.joda.time.DateTime
-import akka.event.EventHandler
-import akka.actor.{Scheduler, ActorRef, Actor}
+import akka.actor.{Actor, ActorSystem}
 
 
 trait AkkaSpec extends Specification {
+  implicit val system = ActorSystem("AkkaSpecSystem")
+
   override def map(fs: => Fragments) = {
     fs ^ Step({
-      EventHandler.shutdown()
-      Actor.registry.shutdownAll()
-      Actor.remote.shutdown()
-      Scheduler.shutdown()
+      system.stop()
     })
   }
 }
@@ -46,11 +43,9 @@ class TwitterStreamingSessionSpec extends AkkaSpec with Mockito {
 
 
   case class ctx() {
-    val mocks = new TwitterStreamingSessionMocks {
+    val mocks = new TwitterStreamingSessionMocks
 
-    }
-
-    val customSessionActorRef = TestActorRef(new TwitterStreamingSessionWithMocks(mocks)).start()
+    val customSessionActorRef = TestActorRef(new TwitterStreamingSessionWithMocks(mocks))
     val customSessionActor = customSessionActorRef.underlyingActor
 
     val tweet1 = new Tweet("1", null, "100+", new GeoPoint(List(2.3, 4.3)), "Hello there!",
@@ -61,7 +56,7 @@ class TwitterStreamingSessionSpec extends AkkaSpec with Mockito {
       val get = mock[AsyncHttpClient#BoundRequestBuilder]
       mocks.client.prepareGet("https://stream.twitter.com/1/statuses/sample.json?") returns get
 
-      customSessionActorRef ? Sample()
+      customSessionActorRef ! Sample()
 
       verifyOnEntity(get, tweet1)
     }
@@ -87,8 +82,7 @@ class TwitterStreamingSessionSpec extends AkkaSpec with Mockito {
       mocks.serializer.deserialize("{tweet1}").asInstanceOf[Tweet] returns tweet1
 
       handler.value.onBodyPartReceived(response)
-      verify(mocks.handler).!(EntityReceived(tweet1))
-      end
+      mocks.handler.underlyingActor.msg must beEqualTo(EntityReceived(tweet1))
     }
 
     def end = {
@@ -98,12 +92,12 @@ class TwitterStreamingSessionSpec extends AkkaSpec with Mockito {
 
 }
 
-trait TwitterStreamingSessionMocks extends Mockito {
+class TwitterStreamingSessionMocks(implicit system: ActorSystem) extends Mockito {
   val strategy = mock[StreamReconnectionStrategy]
   val serializer = mock[EntitySerializer]
   val auth = mock[AuthenticationMechanism]
   val client = mock[AsyncHttpClient]
-  val handler = mock[ActorRef]
+  val handler = TestActorRef[MementoActor]
 }
 
 class TwitterStreamingSessionWithMocks(val mocks: TwitterStreamingSessionMocks) extends TwitterStreamingSession[Tweet] {
@@ -129,10 +123,12 @@ class TwitterStreamingSessionWithMocks(val mocks: TwitterStreamingSessionMocks) 
   def deserialize[T: ClassManifest](content: String): T = mocks.serializer.deserialize(content)
 }
 
-class PrintActor extends Actor with Logging {
+class MementoActor extends Actor {
+  var msg: StreamingEvent = null
+
   def receive = {
-    case msg => {
-      info("Recieved: " + msg)
+    case m: StreamingEvent => {
+      msg = m
     }
   }
 }

@@ -1,15 +1,13 @@
 package org.koderama.twitter
 package streaming
 
-import akka.event.EventHandler
 import java.io.IOException
 import com.ning.http.client.AsyncHttpClient
-import akka.config.Supervision.OneForOneStrategy
-import akka.actor.{ActorRef, Actor}
 import model.Tweet
 import http.{BackOffStreamReconnectionStrategy, StreamReconnectionStrategy, AsyncResponseStreamHandler}
 import protocol.{JsonEntitySerializer, EntitySerializer}
 import http.auth.{OAuthAuthenticationMechanism, BasicAuthenticationMechanism, AuthenticationMechanism}
+import akka.actor.{ActorLogging, ActorRef, Actor}
 
 /**
  * Aggregation trait that defines a default streaming session using
@@ -54,10 +52,10 @@ trait OAuthTwitterStreamingSession
  * @author alejandro@koderama.com
  */
 trait TwitterStreamingSession[T]
-  extends Actor with StreamReconnectionStrategy with EntitySerializer with AuthenticationMechanism with TwitterConfiguration {
-  self.faultHandler = OneForOneStrategy(List(classOf[Exception]), 5, 5000)
+  extends Actor with ActorLogging with StreamReconnectionStrategy with EntitySerializer
+  with AuthenticationMechanism with TwitterConfiguration {
 
-  EventHandler.info(this, "Twitter streaming session is starting up...")
+  log.info("Twitter streaming session is starting up...")
 
   private val httpClient = createHttpClient()
 
@@ -106,7 +104,7 @@ trait TwitterStreamingSession[T]
   }
 
   override def postStop() {
-    EventHandler.info(this, "Streaming session is shutting down...")
+    log.info("Streaming session is shutting down...")
     httpClient.close()
   }
 }
@@ -141,7 +139,7 @@ class RequestExecutor[T](request: AsyncHttpClient#BoundRequestBuilder, session: 
       session.addAuthInfo(request)
       request.execute(this)
     } catch {
-      case e: IOException => EventHandler.error(
+      case e: IOException => session.log.error(
         "IOException while using twitter stream api with method " + request.toString, e)
     }
   }

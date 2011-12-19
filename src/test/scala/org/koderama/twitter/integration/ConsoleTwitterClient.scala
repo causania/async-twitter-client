@@ -1,10 +1,9 @@
 package org.koderama.twitter.integration
 
 import org.koderama.twitter.util.Logging
-import akka.event.EventHandler
-import akka.actor.{Scheduler, Actor}
 import org.koderama.twitter.streaming.{OAuthTwitterStreamingSession}
 import org.koderama.twitter._
+import akka.actor._
 
 
 /**
@@ -14,16 +13,16 @@ import org.koderama.twitter._
  */
 object ConsoleTwitterClient extends App {
 
+  // TODO: load config from file. For some reason ConfigFactory.load("application") doesn't work.
+  val system = ActorSystem("ConsoleTwitterClient")
+
   try {
-    val s = Actor.actorOf[ConsoleTwitterSession].start()
+    val s = system.actorOf[ConsoleTwitterSession]
     s ! Sample()
 
-    Thread.sleep(1500000)
+    Thread.sleep(50000) // Wait some time to get some tweets
   } finally {
-    EventHandler.shutdown()
-    Actor.registry.shutdownAll()
-    Actor.remote.shutdown()
-    Scheduler.shutdown()
+    system.stop()
   }
 }
 
@@ -35,7 +34,7 @@ class ConsoleTwitterSession extends OAuthTwitterStreamingSession {
 
   val defaultTracks = Set("akka", "scala")
 
-  val handler = this.self.spawnLink[PrinterActor]
+  val handler = this.context.actorOf[PrinterActor]
 
   def verificationCode(authUrl: String) = {
     println("Go to the url %s and enter the verification code".format(authUrl))

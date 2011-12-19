@@ -18,6 +18,8 @@ import org.slf4j.LoggerFactory
  */
 trait Logging {
 
+  //TODO: check if it's a Actor and use LoggingAdapter
+
   /**
    * The Logger instance. Created when we need it.
    */

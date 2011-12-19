@@ -23,15 +23,15 @@ object BuildSettings {
 }
 
 object Resolvers {
-  val akka_repo = "Akka Repo" at "http://akka.io/repository"
-  val typesafe_repo = "Typesafe Repo" at "http://repo.typesafe.com/typesafe/releases/"
+  val typesafe_releases = "Typesafe Release" at "http://repo.typesafe.com/typesafe/releases/"
+  val typesafe_snapshots = "Typesafe Snaphots" at "http://repo.typesafe.com/typesafe/internal-snapshots/"
   val web_plugin_repo = "Web plugin repo" at "http://siasia.github.com/maven2"
   val sbt_idea_repo = "sbt-idea-repo" at "http://mpeltonen.github.com/maven/"
-  val all = Seq(akka_repo, typesafe_repo, web_plugin_repo, sbt_idea_repo, Classpaths.typesafeResolver)
+  val all = Seq(typesafe_snapshots, typesafe_releases, web_plugin_repo, sbt_idea_repo)
 }
 
 object Dependencies {
-  val akka_kernel = "se.scalablesolutions.akka" % "akka-kernel" % "1.3-RC1"
-  val akka_sbt = "com.typesafe.akka" % "akka-sbt-plugin" % "2.0-SNAPSHOT" from "http://repo.typesafe.com/typesafe/internal-snapshots/com/typesafe/akka/akka-sbt-plugin_2.9.1_0.11.0/2.0-SNAPSHOT/akka-sbt-plugin-2.0-SNAPSHOT.jar"
+  val akka_kernel = "com.typesafe.akka" % "akka-kernel" % "2.0-SNAPSHOT"
+  val akka_sbt = "com.typesafe.akka" % "akka-sbt-plugin" % "2.0-SNAPSHOT" from "http://repo.typesafe.com/typesafe/internal-snapshots/com/typesafe/akka/akka-sbt-plugin_2.9.1_0.11.2/2.0-SNAPSHOT/akka-sbt-plugin-2.0-SNAPSHOT.jar"
   val all = Seq(akka_kernel, akka_sbt)
 }

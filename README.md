@@ -12,19 +12,17 @@ Usage:
 
 object ConsoleTwitterClient extends App {
 
-  val s = Actor.actorOf(new ConsoleTwitterSession).start()
-  s ! Filter()
+  val system = ActorSystem("ConsoleTwitterClient")
 
-  // Wait some time to get some news
-  Thread.sleep(20000)
+  try {
+    val s = system.actorOf[ConsoleTwitterSession]
+    s ! Sample()
 
-  // Stop everything.... if there is another way, let me know!
-  EventHandler.shutdown()
-  Actor.registry.shutdownAll()
-  Actor.remote.shutdown()
-  Scheduler.shutdown()
+    Thread.sleep(50000) // Wait some time to get some tweets
+  } finally {
+    system.stop()
+  }
 
-}
 
 class ConsoleTwitterSession extends DefaultTwitterStreamingSession {
   def username = "someusername"
@@ -33,7 +31,7 @@ class ConsoleTwitterSession extends DefaultTwitterStreamingSession {
 
   val defaultTracks = Set("akka", "scala")
 
-  def handler = this.self.spawnLink[PrinterActor]
+  def handler = this.context.actorOf[PrinterActor]
 }
 
 class PrinterActor extends Actor with Logging {
@@ -65,7 +63,7 @@ class ConsoleTwitterSession extends OAuthTwitterStreamingSession {
 
   val defaultTracks = Set("akka", "scala")
 
-  val handler = this.self.spawnLink[PrinterActor]
+  val handler = this.context.actorOf[PrinterActor]
 
   def verificationCode(authUrl: String) = {
     println("Go to the url %s and enter the verification code".format(authUrl))

@@ -1,6 +1,6 @@
 package org.koderama.twitter
 
-sealed trait Event
+sealed trait StreamingEvent
 
 /**
  * Returns public statuses that match one or more filter predicates. At least one predicate parameter, follow,
@@ -17,7 +17,7 @@ sealed trait Event
  * @param params
  *            possible parameters: count, delimited, follow, locations and track
  */
-case class Filter(params: RequestParams = new RequestParams) extends Event
+case class Filter(params: RequestParams = new RequestParams) extends StreamingEvent
 
 /**
  * Returns a random sample of all public statuses. The default access level, ‘Spritzer’ provides a small proportion
@@ -31,19 +31,19 @@ case class Filter(params: RequestParams = new RequestParams) extends Event
  * @param params
  *            possible parameters: count and delimiter
  */
-case class Sample(params: RequestParams = new RequestParams) extends Event
+case class Sample(params: RequestParams = new RequestParams) extends StreamingEvent
 
 /**
  * Represents when an entity is read in the stream
  */
-case class EntityReceived[T](entity: T)extends Event
+case class EntityReceived[T](entity: T)extends StreamingEvent
 
 /**
  * Represents when there was an error in the stream
  */
-case class ExceptionOnProcessing(throwable: Throwable)extends Event
+case class ExceptionOnProcessing(throwable: Throwable)extends StreamingEvent
 
 /**
  * Represents when there was an error code in the stream
  */
-case class ErrorCodeOnProcessing(code: Int)extends Event
+case class ErrorCodeOnProcessing(code: Int)extends StreamingEvent

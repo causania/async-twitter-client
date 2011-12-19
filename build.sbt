@@ -19,8 +19,9 @@ libraryDependencies ++= {
     "org.joda" % "joda-convert" % "1.2",
     "org.scribe" % "scribe" % "1.2.3" withSources(),
     "com.ning" % "async-http-client" % "1.7.0-SNAPSHOT" withSources(),
-    "se.scalablesolutions.akka" % "akka-actor" % "1.3-RC1" withSources(),
-    "se.scalablesolutions.akka" % "akka-stm" % "1.3-RC1" withSources()
+    "com.typesafe.akka" % "akka-actor" % "2.0-SNAPSHOT" withSources(),
+    "com.typesafe.akka" % "akka-stm" % "2.0-SNAPSHOT" withSources(),
+    "com.typesafe.akka" % "akka-slf4j" % "2.0-SNAPSHOT" withSources()
   )
 }
 
@@ -36,22 +37,23 @@ libraryDependencies ++= {
     "org.specs2" %% "specs2" % "1.6.1" withSources(),
     "org.specs2" %% "specs2-scalaz-core" % "6.0.1" % "test" withSources(),
     "org.mockito" % "mockito-all" % "1.9.0-rc1" % "test" withSources(),
-    "se.scalablesolutions.akka" % "akka-testkit" % "1.3-RC1" withSources()
+    "com.typesafe.akka" % "akka-testkit" % "2.0-SNAPSHOT" withSources()
   )
 }
 
 // Distribution
 libraryDependencies ++= Seq(
   "com.typesafe.akka" % "akka-sbt-plugin" % "2.0-SNAPSHOT"
-    from "http://repo.typesafe.com/typesafe/internal-snapshots/com/typesafe/akka/akka-sbt-plugin_2.9.1_0.11.0/2.0-SNAPSHOT/akka-sbt-plugin-2.0-SNAPSHOT.jar",
-  "se.scalablesolutions.akka" % "akka-kernel" % "1.3-RC1" withSources()
+    from "http://repo.typesafe.com/typesafe/internal-snapshots/com/typesafe/akka/akka-sbt-plugin_2.9.1_0.11.2/2.0-SNAPSHOT/akka-sbt-plugin-2.0-SNAPSHOT.jar",
+  "com.typesafe.akka" % "akka-kernel" % "2.0-SNAPSHOT" withSources()
 )
 
 
 resolvers ++= Seq(
   "snapshots" at "http://scala-tools.org/repo-snapshots",
   "releases" at "http://scala-tools.org/repo-releases",
-  "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/",
+  "Typesafe Releases" at "http://repo.typesafe.com/typesafe/releases/",
+  "Typesafe Snapshots" at "http://repo.typesafe.com/typesafe/internal-snapshots/",
   "Sonatype OSS" at "http://oss.sonatype.org/content/repositories/releases/",
   "Sonatype OSS Snapshots" at "http://oss.sonatype.org/content/repositories/snapshots/",
   "Coda Hale's Repository" at "http://repo.codahale.com/",
